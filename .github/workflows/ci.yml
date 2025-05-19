@@ -16,6 +16,10 @@ jobs:
       run: npm install
       working-directory: ./web-app
 
+    - name: Debug node_modules
+      run: ls -la node_modules/evil-lib
+      working-directory: ./web-app
+
     - name: Run vulnerable web app
       env:
         SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}

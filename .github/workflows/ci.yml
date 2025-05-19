@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  compromised-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./web-app
+
+    - name: Run vulnerable web app
+      env:
+        SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
+      run: |
+        node index.js &
+        sleep 5
+        curl http://localhost:3000
+      working-directory: ./web-app

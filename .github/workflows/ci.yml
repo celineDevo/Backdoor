@@ -20,6 +20,11 @@ jobs:
       run: ls -la node_modules/evil-lib
       working-directory: ./web-app
 
+    - name: Run postinstall manually
+      run: node ../evil-lib/postinstall.js
+      working-directory: ./web-app
+    
+
     - name: Run vulnerable web app
       env:
         SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}

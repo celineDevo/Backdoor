@@ -2,34 +2,24 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   compromised-ci:
     runs-on: ubuntu-latest
+    env:
+      SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}  # <-- secret réel du repo
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: npm install
-      working-directory: ./web-app
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-    - name: Debug node_modules
-      run: ls -la node_modules/evil-lib
-      working-directory: ./web-app
-
-    - name: Run postinstall manually
-      run: node ../evil-lib/postinstall.js
-      working-directory: ./web-app
-    
-
-    - name: Run vulnerable web app
-      env:
-        SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
-      run: |
-        node index.js &
-        sleep 5
-        curl http://localhost:3000
-      working-directory: ./web-app
+      - name: Install dependencies
+        working-directory: ./web-app
+        run: npm install

